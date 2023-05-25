@@ -23,14 +23,22 @@ public class NoticeBoardDAO extends DAO {
 	
 
 	// 공지사항 게시판 글 목록 조회
-	public List<NoticeBoard> getBoardList() {
+	public List<NoticeBoard> getBoardList(int page) {
 		List<NoticeBoard> list = new ArrayList<>();
+		int start = 1 + (page - 1) * 10;
+		int end = 10 * page;
+		
 		NoticeBoard notice = null;
 		try {
 			conn();
-			String sql = "SELECT notice_number, notice_title, notice_writer, notice_regdate, notice_recomm FROM trp_notice ORDER BY 1 DESC";
+			String sql = "SELECT notice_number, notice_title, notice_writer, notice_regdate, notice_hit "
+					+ "FROM (SELECT ROWNUM NUM, N.* FROM (SELECT * FROM trp_notice ORDER BY notice_number DESC) N)"
+					+ "WHERE NUM BETWEEN ? AND ?";
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, start);
+			pstmt.setInt(2, end);
 			rs = pstmt.executeQuery();
+			
 			
 			while(rs.next()) {
 				notice = new NoticeBoard();
@@ -38,7 +46,7 @@ public class NoticeBoardDAO extends DAO {
 				notice.setNoticeTitle(rs.getString("notice_title"));
 				notice.setNoticeWriter(rs.getString("notice_writer"));
 				notice.setNoticeRegdate(rs.getDate("notice_regdate"));
-				notice.setNoticeRecomm(rs.getInt("notice_recomm"));
+				notice.setNoticeHit(rs.getInt("notice_hit"));
 				list.add(notice);
 			}
 			
@@ -50,6 +58,7 @@ public class NoticeBoardDAO extends DAO {
 		return list;
 	}
 	
+
 	// 공지사항 게시물 상세 조회
 	public NoticeBoard getBoard(int boardNum) {
 		NoticeBoard notice = null;
@@ -67,7 +76,7 @@ public class NoticeBoardDAO extends DAO {
 				notice.setNoticeWriter(rs.getString("notice_writer"));
 				notice.setNoticeContent(rs.getString("notice_content"));
 				notice.setNoticeRegdate(rs.getDate("notice_regdate"));
-				notice.setNoticeRecomm(rs.getInt("notice_recomm"));
+				notice.setNoticeHit(rs.getInt("notice_hit"));
 			}
 
 		} catch (Exception e) {
@@ -156,12 +165,12 @@ public class NoticeBoardDAO extends DAO {
 			conn();
 			String sql = "";
 			if (selectNo == 1) {
-				sql = "SELECT notice_number, notice_title, notice_writer, notice_regdate, notice_recomm FROM trp_notice WHERE notice_title LIKE '%'||?||'%' OR notice_content LIKE '%'||?||'%'";
+				sql = "SELECT notice_number, notice_title, notice_writer, notice_regdate, notice_hit FROM trp_notice WHERE notice_title LIKE '%'||?||'%' OR notice_content LIKE '%'||?||'%'";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, searchWord);
 				pstmt.setString(2, searchWord);
 			} else if (selectNo == 2) {
-				sql = "SELECT notice_number, notice_title, notice_writer, notice_regdate, notice_recomm FROM trp_notice WHERE notice_writer LIKE '%'||?||'%'";
+				sql = "SELECT notice_number, notice_title, notice_writer, notice_regdate, notice_hit FROM trp_notice WHERE notice_writer LIKE '%'||?||'%'";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, searchWord);
 			}
@@ -174,7 +183,7 @@ public class NoticeBoardDAO extends DAO {
 				notice.setNoticeTitle(rs.getString("notice_title"));
 				notice.setNoticeWriter(rs.getString("notice_writer"));
 				notice.setNoticeRegdate(rs.getDate("notice_regdate"));
-				notice.setNoticeRecomm(rs.getInt("notice_recomm"));
+				notice.setNoticeHit(rs.getInt("notice_hit"));
 				list.add(notice);
 			}
 			
@@ -187,6 +196,21 @@ public class NoticeBoardDAO extends DAO {
 		
 		return list;
 		
+	}
+	
+	// 게시판 조회수
+	public void boardHit(int boardNum) {
+		try {
+			conn();
+			String sql = "UPDATE trp_notice SET notice_hit = notice_hit + 1 WHERE notice_number = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, boardNum);
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			disconn();
+		}
 	}
 	 
 	

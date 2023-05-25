@@ -13,14 +13,14 @@ public class NoticeBoardService {
 	NoticeReplyService nrs = new NoticeReplyService();
 	
 	// 공지사항 게시판 글 목록 조회
-	public void getBoardList() {
-		List<NoticeBoard> list = NoticeBoardDAO.getInstance().getBoardList();
-		System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 추천수");
+	public void getBoardList(int page) {
+		List<NoticeBoard> list = NoticeBoardDAO.getInstance().getBoardList(page);
+		System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수");
 		if (list.size() == 0) {
 			System.out.println("등록된 게시물이 없습니다.");
 		} else {
 			for(int i = 0; i < list.size(); i++) {
-				System.out.println(list.get(i).getNoticeNumber() + "\t" + list.get(i).getNoticeTitle() + "\t" + list.get(i).getNoticeWriter() + "\t" + list.get(i).getNoticeRegdate() + "\t" + list.get(i).getNoticeRecomm());
+				System.out.println(list.get(i).getNoticeNumber() + "\t" + list.get(i).getNoticeTitle() + "\t" + list.get(i).getNoticeWriter() + "\t" + list.get(i).getNoticeRegdate() + "\t" + list.get(i).getNoticeHit());
 			}
 		}
 	}
@@ -33,14 +33,29 @@ public class NoticeBoardService {
 		NoticeBoard notice = NoticeBoardDAO.getInstance().getBoard(boardNum);
 		
 		if (notice != null) {
+			boardHit(notice.getNoticeNumber());
 			System.out.println("===== 게시물 상세 조회 =====");
 			System.out.println("번호 : " + notice.getNoticeNumber());
 			System.out.println("제목 : " + notice.getNoticeTitle());
 			System.out.println("작성자 : " + notice.getNoticeWriter());
 			System.out.println("내용 : " + notice.getNoticeContent());
 			System.out.println("등록일 : " + notice.getNoticeRegdate());
-			System.out.println("추천수 : " + notice.getNoticeRecomm());
+			System.out.println("조회수 : " + notice.getNoticeHit());
+			
 			nrs.getReplyList(boardNum);
+			System.out.println("1. 댓글 작성 | 2. 댓글 수정 | 3. 댓글 삭제 | 4. 취소");
+			int rpSelectNo = Integer.parseInt(sc.nextLine());
+			if (rpSelectNo == 1) {
+				nrs.writeReply(boardNum);
+			} else if (rpSelectNo == 2) {
+				nrs.updateReply(boardNum);
+			} else if (rpSelectNo == 3) {
+				nrs.deleteReply(boardNum);
+			} else if (rpSelectNo == 4) {
+				
+			} else {
+				System.out.println("잘못된 입력입니다.");
+			}
 			
 			int selectNo;
 			
@@ -48,7 +63,7 @@ public class NoticeBoardService {
 				System.out.println("0. 뒤로 가기");
 				selectNo = Integer.parseInt(sc.nextLine());
 				if (selectNo == 0) {
-					return;
+
 				} else {
 					System.out.println("잘못된 입력입니다.");
 				} 
@@ -88,15 +103,16 @@ public class NoticeBoardService {
 			notice.setNoticeWriter(MemberService.memberInfo.getMemberId());
 			System.out.println("내용 >");
 			notice.setNoticeContent(sc.nextLine());	
-		}
-		
+			
 			int result = NoticeBoardDAO.getInstance().insertBoard(notice);
-		
-		if (result > 0) {
-			System.out.println("게시물 작성이 완료 되었습니다.");
-		} else {
-			System.out.println("게시물 작성에 실패 했습니다.");
+			
+			if (result > 0) {
+				System.out.println("게시물 작성이 완료 되었습니다.");
+			} else {
+				System.out.println("게시물 작성에 실패 했습니다.");
+			}
 		}
+
 		
 	}
 	
@@ -147,17 +163,24 @@ public class NoticeBoardService {
 		String searchWord = sc.nextLine();
 		
 		List<NoticeBoard> list = NoticeBoardDAO.getInstance().searchBoard(searchWord, selectNo);
-		System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 추천수");
+		System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수");
 		if (list.size() == 0) {
 			System.out.println("등록된 게시물이 없습니다.");
 		} else {
 			for(int i = 0; i < list.size(); i++) {
-				System.out.println(list.get(i).getNoticeNumber() + "\t" + list.get(i).getNoticeTitle() + "\t" + list.get(i).getNoticeWriter() + "\t" + list.get(i).getNoticeRegdate() + "\t" + list.get(i).getNoticeRecomm());
+				System.out.println(list.get(i).getNoticeNumber() + "\t" + list.get(i).getNoticeTitle() + "\t" + list.get(i).getNoticeWriter() + "\t" + list.get(i).getNoticeRegdate() + "\t" + list.get(i).getNoticeHit());
 			}
 		
 	}
 
 	}
+	
+	// 게시판 조회수
+	public void boardHit(int boardNum) {
+		NoticeBoardDAO.getInstance().boardHit(boardNum);
+	}
+	
+
 	
 	
 }

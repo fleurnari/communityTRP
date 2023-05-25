@@ -13,5 +13,5 @@ public class NoticeBoard {
 	private String NoticeWriter;
 	private String NoticeContent;
 	private Date NoticeRegdate;
-	private int NoticeRecomm;
+	private int NoticeHit;
 }

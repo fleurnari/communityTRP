@@ -1,11 +1,14 @@
 package com.trp.exe;
 
+import java.util.List;
 import java.util.Scanner;
 
 import com.trp.member.MemberService;
 import com.trp.notice.NoticeBoard;
 import com.trp.notice.NoticeBoardDAO;
 import com.trp.notice.NoticeBoardService;
+import com.trp.notice.NoticeReply;
+import com.trp.notice.NoticeReplyService;
 
 public class BoardApp {
 	
@@ -52,9 +55,10 @@ public class BoardApp {
 	
 	private void noticeBoardRun() {
 		boolean flag = true;
-		nbs.getBoardList();
+		int page = 1;
+		nbs.getBoardList(page);
 		while (flag) {
-			System.out.println("1. 게시물 상세 조회 | 2. 게시물 검색 | 3. 게시물 작성 | 4. 뒤로 가기");
+			System.out.println("1. 게시물 상세 조회 | 2. 게시물 검색 | 3. 게시물 작성 | 4. 이전 페이지 | 5. 다음 페이지 | 6. 뒤로 가기");
 			int selectNo = Integer.parseInt(sc.nextLine());
 			switch (selectNo) {
 			case 1:
@@ -67,6 +71,17 @@ public class BoardApp {
 				nbs.insertBoard();
 				break;
 			case 4:
+				page--;
+				if (page <= 1) {
+					page = 1;
+				}
+				nbs.getBoardList(page);
+				break;
+			case 5:
+				page++;
+				nbs.getBoardList(page);
+				break;
+			case 6:
 				flag = false;
 				break;
 			default:
