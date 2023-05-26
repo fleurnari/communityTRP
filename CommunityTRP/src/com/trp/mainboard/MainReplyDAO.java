@@ -1,39 +1,39 @@
-package com.trp.notice;
+package com.trp.mainboard;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.trp.common.DAO;
 
-public class NoticeReplyDAO extends DAO {
-
-	private static NoticeReplyDAO ntReplyDao = null;
+public class MainReplyDAO extends DAO {
 	
-	private NoticeReplyDAO() {
+private static MainReplyDAO mainReplyDao = null;
+	
+	private MainReplyDAO() {
 		
 	}
 	
-	public static NoticeReplyDAO getInstance() {
-		if (ntReplyDao == null) {
-			ntReplyDao = new NoticeReplyDAO();
+	public static MainReplyDAO getInstance() {
+		if (mainReplyDao == null) {
+			mainReplyDao = new MainReplyDAO();
 		}
-		return ntReplyDao;
+		return mainReplyDao;
 	}
 	
 	// 댓글 조회
-	public List<NoticeReply> getReplyList(int boardNum) {
-		List<NoticeReply> list = new ArrayList<>();
-		NoticeReply reply = null;
+	public List<MainReply> getReplyList(int boardNum) {
+		List<MainReply> list = new ArrayList<>();
+		MainReply reply = null;
 		
 		try {
 			conn();
-			String sql = "SELECT reply_number, reply_writer, reply_content, reply_regdate FROM notice_reply WHERE board_number = ? ORDER BY 1 DESC";
+			String sql = "SELECT reply_number, reply_writer, reply_content, reply_regdate FROM main_reply WHERE board_number = ? ORDER BY 1 DESC";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, boardNum);
 			rs = pstmt.executeQuery();
 			
 			while (rs.next()) {
-				reply = new NoticeReply();
+				reply = new MainReply();
 				reply.setReplyNumber(rs.getInt("reply_number"));
 				reply.setReplyWriter(rs.getString("reply_writer"));
 				reply.setReplyContent(rs.getString("reply_content"));
@@ -52,11 +52,11 @@ public class NoticeReplyDAO extends DAO {
 	
 	
 	// 댓글 작성
-	public int writeReply(NoticeReply reply) {
+	public int writeReply(MainReply reply) {
 		int result = 0;
 		try {
 			conn();
-			String sql = "INSERT INTO notice_reply VALUES (?,main_reply_seq.nextval,?,?,sysdate)";
+			String sql = "INSERT INTO main_reply VALUES (?,main_reply_seq.nextval,?,?,sysdate)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, reply.getBoardNumber());
 			pstmt.setString(2, reply.getReplyWriter());
@@ -75,12 +75,12 @@ public class NoticeReplyDAO extends DAO {
 	}
 	
 	// 댓글 수정
-	public int updateReply(NoticeReply reply) {
+	public int updateReply(MainReply reply) {
 		int result = 0;
 		
 		try {
 			conn();
-			String sql = "UPDATE notice_reply SET reply_content = ? WHERE reply_number = ?";
+			String sql = "UPDATE main_reply SET reply_content = ? WHERE reply_number = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, reply.getReplyContent());
 			pstmt.setInt(2, reply.getReplyNumber());
@@ -101,7 +101,7 @@ public class NoticeReplyDAO extends DAO {
 		int result = 0;
 		try {
 			conn();
-			String sql = "DELETE FROM notice_reply WHERE reply_number = ?";
+			String sql = "DELETE FROM main_reply WHERE reply_number = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, replyNum);
 			
@@ -118,17 +118,17 @@ public class NoticeReplyDAO extends DAO {
 	
 	
 	// 선택된 댓글 조회
-	public NoticeReply getReply (int replyNum) {
-		NoticeReply reply = null;
+	public MainReply getReply (int replyNum) {
+		MainReply reply = null;
 		try {
 			conn();
-			String sql = "SELECT reply_number, reply_writer, reply_content FROM notice_reply WHERE reply_number = ?";
+			String sql = "SELECT reply_number, reply_writer, reply_content FROM main_reply WHERE reply_number = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, replyNum);
 			rs = pstmt.executeQuery();
 			
 			if (rs.next()) {
-				reply = new NoticeReply();
+				reply = new MainReply();
 				reply.setReplyNumber(rs.getInt("reply_number"));
 				reply.setReplyWriter(rs.getString("reply_writer"));
 				reply.setReplyContent(rs.getString("reply_content"));
@@ -141,8 +141,5 @@ public class NoticeReplyDAO extends DAO {
 		}
 		return reply;
 	}
-	
 
-	
-	
 }

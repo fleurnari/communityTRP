@@ -1,4 +1,4 @@
-package com.trp.notice;
+package com.trp.anonymous;
 
 import java.sql.Date;
 
@@ -7,12 +7,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class NoticeReply {
+public class AnonyReply {
 	private int boardNumber;
 	private int replyNumber;
 	private String replyWriter;
 	private String replyContent;
 	private Date replyRegdate;
-	
 }
-

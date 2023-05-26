@@ -1,4 +1,4 @@
-package com.trp.notice;
+package com.trp.anonymous;
 
 import java.sql.Date;
 
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class NoticeBoard {
+public class AnonyBoard {
 	private int BoardNumber;
 	private String BoardTitle;
 	private String BoardWriter;

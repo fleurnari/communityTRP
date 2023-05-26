@@ -47,15 +47,16 @@ public class MemberService {
 			member.setMemberName(sc.nextLine());
 			System.out.println("EMAIL>");
 			member.setMemberEmail(sc.nextLine());
+			
+			int result = MemberDAO.getInstance().joinMember(member);
+			
+			if (result > 0) {
+				System.out.println("회원 가입이 완료 되었습니다😘😘");
+			} else {
+				System.out.println("회원 가입에 실패 했습니다😢😢");
+			}
 		}
 			
-		int result = MemberDAO.getInstance().joinMember(member);
-		
-		if (result > 0) {
-			System.out.println("회원 가입이 완료 되었습니다😘😘");
-		} else {
-			System.out.println("회원 가입에 실패 했습니다😢😢");
-		}
 		
 	}
 	

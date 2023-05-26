@@ -1,4 +1,4 @@
-package com.trp.notice;
+package com.trp.challenge;
 
 import java.sql.Date;
 
@@ -7,11 +7,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class NoticeBoard {
+public class ChalBoard {
 	private int BoardNumber;
 	private String BoardTitle;
 	private String BoardWriter;
-	private String BoardContent;
+	private String BoardContent1;
+	private String BoardContent2;
+	private String BoardContent3;
 	private Date BoardRegdate;
 	private int BoardHit;
+	private int BoardRecomm;
 }

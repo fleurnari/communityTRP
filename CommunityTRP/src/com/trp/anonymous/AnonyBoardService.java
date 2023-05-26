@@ -1,55 +1,53 @@
-package com.trp.notice;
+package com.trp.anonymous;
 
 import java.util.List;
 import java.util.Scanner;
 
 import com.trp.member.MemberService;
 
-
-
-public class NoticeBoardService {
+public class AnonyBoardService {
 	
 	Scanner sc = new Scanner(System.in);
-	NoticeReplyService nrs = new NoticeReplyService();
+	AnonyReplyService ars = new AnonyReplyService();
 	
-	// 공지사항 게시판 글 목록 조회
+	// 익명 게시판 글 목록 조회
 	public void getBoardList(int page) {
-		List<NoticeBoard> list = NoticeBoardDAO.getInstance().getBoardList(page);
+		List<AnonyBoard> list = AnonyBoardDAO.getInstance().getBoardList(page);
 		System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수");
 		if (list.size() == 0) {
 			System.out.println("등록된 게시물이 없습니다.");
 		} else {
 			for(int i = 0; i < list.size(); i++) {
-				System.out.println(list.get(i).getBoardNumber() + "\t" + list.get(i).getBoardTitle() + "\t" + list.get(i).getBoardWriter() + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit());
+				System.out.println(list.get(i).getBoardNumber() + "\t" + list.get(i).getBoardTitle() + "\t" + "익명의 사용자" + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit());
 			}
 		}
 	}
 	
-	// 공지사항 게시물 상세 조회
+	// 익명 게시물 상세 조회
 	public void getBoard() {
 		System.out.println("조회할 게시물 번호를 입력하세요.");
 		int boardNum = Integer.parseInt(sc.nextLine());
 		boardHit(boardNum);
-		NoticeBoard notice = NoticeBoardDAO.getInstance().getBoard(boardNum);
+		AnonyBoard anony = AnonyBoardDAO.getInstance().getBoard(boardNum);
 		
-		if (notice != null) {
+		if (anony != null) {
 			System.out.println("===== 게시물 상세 조회 =====");
-			System.out.println("번호 : " + notice.getBoardNumber());
-			System.out.println("제목 : " + notice.getBoardTitle());
-			System.out.println("작성자 : " + notice.getBoardWriter());
-			System.out.println("내용 : " + notice.getBoardContent());
-			System.out.println("등록일 : " + notice.getBoardRegdate());
-			System.out.println("조회수 : " + notice.getBoardHit());
+			System.out.println("번호 : " + anony.getBoardNumber());
+			System.out.println("제목 : " + anony.getBoardTitle());
+			System.out.println("작성자 : 익명의 사용자");
+			System.out.println("내용 : " + anony.getBoardContent());
+			System.out.println("등록일 : " + anony.getBoardRegdate());
+			System.out.println("조회수 : " + anony.getBoardHit());
 			
-			nrs.getReplyList(boardNum);
+			ars.getReplyList(boardNum);
 			System.out.println("1. 댓글 작성 | 2. 댓글 수정 | 3. 댓글 삭제 | 4. 취소");
 			int rpSelectNo = Integer.parseInt(sc.nextLine());
 			if (rpSelectNo == 1) {
-				nrs.writeReply(boardNum);
+				ars.writeReply(boardNum);
 			} else if (rpSelectNo == 2) {
-				nrs.updateReply(boardNum);
+				ars.updateReply(boardNum);
 			} else if (rpSelectNo == 3) {
-				nrs.deleteReply(boardNum);
+				ars.deleteReply(boardNum);
 			} else if (rpSelectNo == 4) {
 				
 			} else {
@@ -58,7 +56,7 @@ public class NoticeBoardService {
 			
 			int selectNo;
 			
-			if (MemberService.memberInfo == null || !(MemberService.memberInfo.getMemberId().equals(notice.getBoardWriter())) && !(MemberService.memberInfo.getMemberAuth().equals("A"))) {
+			if (MemberService.memberInfo == null || !(MemberService.memberInfo.getMemberId().equals(anony.getBoardWriter())) && !(MemberService.memberInfo.getMemberAuth().equals("A"))) {
 				System.out.println("0. 뒤로 가기");
 				selectNo = Integer.parseInt(sc.nextLine());
 				if (selectNo == 0) {
@@ -71,9 +69,9 @@ public class NoticeBoardService {
 					System.out.println("1. 게시물 수정 | 2. 게시물 삭제 | 3. 뒤로 가기");
 					selectNo = Integer.parseInt(sc.nextLine());
 					if (selectNo == 1) {
-						updateBoard(notice);
+						updateBoard(anony);
 					} else if (selectNo == 2) {
-						deleteBoard(notice);
+						deleteBoard(anony);
 					} else if (selectNo == 3) {
 						return;
 					} else {
@@ -88,22 +86,20 @@ public class NoticeBoardService {
 
 	}
 	
-	// 공지사항 작성
+	// 익명 작성
 	public void insertBoard() {
-		NoticeBoard notice = new NoticeBoard();
+		AnonyBoard anony = new AnonyBoard();
 		if (MemberService.memberInfo == null) {
 			System.out.println("먼저 로그인을 해 주세요.");
-		} else if(!(MemberService.memberInfo.getMemberAuth().equals("A"))) {
-			System.out.println("관리자만 공지사항을 작성할 수 있습니다.");
 		} else {
 			System.out.println("===== 게시물 작성 =====");
 			System.out.println("제목 >");
-			notice.setBoardTitle(sc.nextLine());
-			notice.setBoardWriter(MemberService.memberInfo.getMemberId());
+			anony.setBoardTitle(sc.nextLine());
+			anony.setBoardWriter(MemberService.memberInfo.getMemberId());
 			System.out.println("내용 >");
-			notice.setBoardContent(sc.nextLine());	
+			anony.setBoardContent(sc.nextLine());	
 			
-			int result = NoticeBoardDAO.getInstance().insertBoard(notice);
+			int result = AnonyBoardDAO.getInstance().insertBoard(anony);
 			
 			if (result > 0) {
 				System.out.println("게시물 작성이 완료 되었습니다.");
@@ -115,20 +111,20 @@ public class NoticeBoardService {
 		
 	}
 	
-	// 공지사항 수정
-	public void updateBoard(NoticeBoard notice) {
+	// 익명 수정
+	public void updateBoard(AnonyBoard anony) {
 		System.out.println("===== 게시물 수정 =====");
 		System.out.println("1) 제목 변경 | 2) 내용 변경");
 		int selectNo = Integer.parseInt(sc.nextLine());
 		if (selectNo == 1) {
 			System.out.println("새 제목>");
-			notice.setBoardTitle(sc.nextLine());
+			anony.setBoardTitle(sc.nextLine());
 		} else if (selectNo == 2) {
 			System.out.println("새 내용>");
-			notice.setBoardContent(sc.nextLine());
+			anony.setBoardContent(sc.nextLine());
 		}
 		
-		int result = NoticeBoardDAO.getInstance().updateBoard(notice, selectNo);
+		int result = AnonyBoardDAO.getInstance().updateBoard(anony, selectNo);
 		
 		if (result >= 1) {
 			System.out.println("게시물 수정이 완료 되었습니다.");
@@ -138,36 +134,33 @@ public class NoticeBoardService {
 		
 	}
 	
-	// 공지사항 삭제
-	public void deleteBoard(NoticeBoard notice) {
+	// 익명 삭제
+	public void deleteBoard(AnonyBoard anony) {
 		System.out.println("===== 게시물 삭제 =====");
 		System.out.println("정말 삭제 하시겠습니까? (Y/N)");
 		String answer = sc.nextLine();
 		
 		if (answer.equals("Y")) {
-			NoticeBoardDAO.getInstance().deleteBoard(notice.getBoardNumber());
+			AnonyBoardDAO.getInstance().deleteBoard(anony.getBoardNumber());
 			System.out.println("게시물이 삭제 되었습니다.");
 		} else {
-			System.out.println("게시물 작성을 취소합니다.");
+			System.out.println("게시물 삭제에 실패 했습니다.");
 		}
 		
 	}
 	
-	// 공지사항 검색
+	// 익명 검색
 	public void searchBoard() {
-		System.out.println("===== 검색할 항목을 선택하세요. =====");
-		System.out.println("1. 제목+내용 | 2. 작성자");
-		int selectNo = Integer.parseInt(sc.nextLine());
-		System.out.println("===== 검색 단어를 입력하세요. =====");
+		System.out.println("===== 제목+내용을 검색할 단어를 입력하세요. =====");
 		String searchWord = sc.nextLine();
 		
-		List<NoticeBoard> list = NoticeBoardDAO.getInstance().searchBoard(searchWord, selectNo);
+		List<AnonyBoard> list = AnonyBoardDAO.getInstance().searchBoard(searchWord);
 		System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수");
 		if (list.size() == 0) {
 			System.out.println("등록된 게시물이 없습니다.");
 		} else {
 			for(int i = 0; i < list.size(); i++) {
-				System.out.println(list.get(i).getBoardNumber() + "\t" + list.get(i).getBoardTitle() + "\t" + list.get(i).getBoardWriter() + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit());
+				System.out.println(list.get(i).getBoardNumber() + "\t" + list.get(i).getBoardTitle() + "\t" + "익명의 사용자" + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit());
 			}
 		
 	}
@@ -176,10 +169,7 @@ public class NoticeBoardService {
 	
 	// 게시판 조회수
 	public void boardHit(int boardNum) {
-		NoticeBoardDAO.getInstance().boardHit(boardNum);
+		AnonyBoardDAO.getInstance().boardHit(boardNum);
 	}
-	
 
-	
-	
 }
