@@ -27,7 +27,7 @@ public class MainBoardDAO extends DAO {
 		int start = 1 + (page - 1) * 10;
 		int end = 10 * page;
 		
-		MainBoard notice = null;
+		MainBoard main = null;
 		try {
 			conn();
 			String sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm "
@@ -40,14 +40,14 @@ public class MainBoardDAO extends DAO {
 			
 			
 			while(rs.next()) {
-				notice = new MainBoard();
-				notice.setBoardNumber(rs.getInt("board_number"));
-				notice.setBoardTitle(rs.getString("board_title"));
-				notice.setBoardWriter(rs.getString("board_writer"));
-				notice.setBoardRegdate(rs.getDate("board_regdate"));
-				notice.setBoardHit(rs.getInt("board_hit"));
-				notice.setBoardRecomm(rs.getInt("board_recomm"));
-				list.add(notice);
+				main = new MainBoard();
+				main.setBoardNumber(rs.getInt("board_number"));
+				main.setBoardTitle(rs.getString("board_title"));
+				main.setBoardWriter(rs.getString("board_writer"));
+				main.setBoardRegdate(rs.getDate("board_regdate"));
+				main.setBoardHit(rs.getInt("board_hit"));
+				main.setBoardRecomm(rs.getInt("board_recomm"));
+				list.add(main);
 			}
 			
 		} catch (Exception e) {
@@ -61,7 +61,7 @@ public class MainBoardDAO extends DAO {
 
 	// 삼행시 게시물 상세 조회
 	public MainBoard getBoard(int boardNum) {
-		MainBoard notice = null;
+		MainBoard main = null;
 		try {
 			conn();
 			String sql = "SELECT * FROM trp_main WHERE board_number = ?";
@@ -70,14 +70,14 @@ public class MainBoardDAO extends DAO {
 			rs = pstmt.executeQuery();
 			
 			if (rs.next()) {
-				notice = new MainBoard();
-				notice.setBoardNumber(rs.getInt("board_number"));
-				notice.setBoardTitle(rs.getString("board_title"));
-				notice.setBoardWriter(rs.getString("board_writer"));
-				notice.setBoardContent(rs.getString("board_content"));
-				notice.setBoardRegdate(rs.getDate("board_regdate"));
-				notice.setBoardHit(rs.getInt("board_hit"));
-				notice.setBoardRecomm(rs.getInt("board_recomm"));
+				main = new MainBoard();
+				main.setBoardNumber(rs.getInt("board_number"));
+				main.setBoardTitle(rs.getString("board_title"));
+				main.setBoardWriter(rs.getString("board_writer"));
+				main.setBoardContent(rs.getString("board_content"));
+				main.setBoardRegdate(rs.getDate("board_regdate"));
+				main.setBoardHit(rs.getInt("board_hit"));
+				main.setBoardRecomm(rs.getInt("board_recomm"));
 			}
 
 		} catch (Exception e) {
@@ -85,19 +85,19 @@ public class MainBoardDAO extends DAO {
 		} finally {
 			disconn();
 		}
-		return notice;
+		return main;
 	}
 	
 	// 삼행시 작성
-	public int insertBoard(MainBoard notice) {
+	public int insertBoard(MainBoard main) {
 		int result = 0;
 		try {
 			conn();
 			String sql = "INSERT INTO trp_main VALUES (trp_main_seq.NEXTVAL,?,?,?,sysdate,0,0)";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, notice.getBoardTitle());
-			pstmt.setString(2, notice.getBoardWriter());
-			pstmt.setString(3, notice.getBoardContent());
+			pstmt.setString(1, main.getBoardTitle());
+			pstmt.setString(2, main.getBoardWriter());
+			pstmt.setString(3, main.getBoardContent());
 			
 			result = pstmt.executeUpdate();
 			
@@ -111,7 +111,7 @@ public class MainBoardDAO extends DAO {
 	}
 	
 	// 삼행시 수정
-	public int updateBoard(MainBoard notice, int selectNo) {
+	public int updateBoard(MainBoard main, int selectNo) {
 		int result = 0;
 		try {
 			conn();
@@ -119,13 +119,13 @@ public class MainBoardDAO extends DAO {
 			if (selectNo == 1) {
 				sql = "UPDATE trp_main SET board_title = ? WHERE board_number = ?";
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, notice.getBoardTitle());
+				pstmt.setString(1, main.getBoardTitle());
 			} else if (selectNo == 2) {
 				sql = "UPDATE trp_main SET board_content = ? WHERE board_number = ?";
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, notice.getBoardContent());
+				pstmt.setString(1, main.getBoardContent());
 			}
-				pstmt.setInt(2, notice.getBoardNumber());
+				pstmt.setInt(2, main.getBoardNumber());
 				result = pstmt.executeUpdate();
 				
 		} catch (Exception e) {
@@ -160,7 +160,7 @@ public class MainBoardDAO extends DAO {
 	// 삼행시 게시물 검색
 	public List<MainBoard> searchBoard(String searchWord, int selectNo) {
 		List<MainBoard> list = new ArrayList<>();
-		MainBoard notice = null;
+		MainBoard main = null;
 		
 		try {
 			conn();
@@ -179,14 +179,14 @@ public class MainBoardDAO extends DAO {
 			rs = pstmt.executeQuery();
 			
 			while (rs.next()) {
-				notice = new MainBoard();
-				notice.setBoardNumber(rs.getInt("board_number"));
-				notice.setBoardTitle(rs.getString("board_title"));
-				notice.setBoardWriter(rs.getString("board_writer"));
-				notice.setBoardRegdate(rs.getDate("board_regdate"));
-				notice.setBoardHit(rs.getInt("board_hit"));
-				notice.setBoardRecomm(rs.getInt("board_recomm"));
-				list.add(notice);
+				main = new MainBoard();
+				main.setBoardNumber(rs.getInt("board_number"));
+				main.setBoardTitle(rs.getString("board_title"));
+				main.setBoardWriter(rs.getString("board_writer"));
+				main.setBoardRegdate(rs.getDate("board_regdate"));
+				main.setBoardHit(rs.getInt("board_hit"));
+				main.setBoardRecomm(rs.getInt("board_recomm"));
+				list.add(main);
 			}
 			
 		} catch (Exception e) {
@@ -229,6 +229,42 @@ public class MainBoardDAO extends DAO {
 			disconn();
 		}
 	}
+	
+	
+	// 베스트 삼행시 목록 조회
+	public List<MainBoard> getBestMainList() {
+		List<MainBoard> list = new ArrayList<>();
+		
+		MainBoard main = null;
+		try {
+			conn();
+			String sql = "SELECT RANKING, BOARD_NUMBER, BOARD_TITLE, BOARD_WRITER, BOARD_REGDATE, BOARD_HIT, BOARD_RECOMM\r\n"
+					+ "FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_RECOMM DESC, BOARD_HIT DESC) AS RANKING, BOARD_NUMBER, BOARD_TITLE, BOARD_WRITER, BOARD_REGDATE, BOARD_HIT, BOARD_RECOMM\r\n"
+					+ "FROM TRP_MAIN ORDER BY BOARD_RECOMM DESC) WHERE RANKING BETWEEN 1 AND 10";
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			
+			while(rs.next()) {
+				main = new MainBoard();
+				main.setRanking(rs.getInt("ranking"));
+				main.setBoardNumber(rs.getInt("board_number"));
+				main.setBoardTitle(rs.getString("board_title"));
+				main.setBoardWriter(rs.getString("board_writer"));
+				main.setBoardRegdate(rs.getDate("board_regdate"));
+				main.setBoardHit(rs.getInt("board_hit"));
+				main.setBoardRecomm(rs.getInt("board_recomm"));
+				list.add(main);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			disconn();
+		}
+		return list;
+	}
+	
 	
 	
 

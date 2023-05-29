@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.trp.common.DAO;
+
 public class ChalBoardDAO extends DAO {
 	
 	
@@ -240,5 +241,38 @@ public class ChalBoardDAO extends DAO {
 		}
 	}
 	
+	// 베스트 삼행시 목록 조회
+	public List<ChalBoard> getBestChalList() {
+		List<ChalBoard> list = new ArrayList<>();
+		
+		ChalBoard chal = null;
+		try {
+			conn();
+			String sql = "SELECT RANKING, BOARD_NUMBER, BOARD_TITLE, BOARD_WRITER, BOARD_REGDATE, BOARD_HIT, BOARD_RECOMM\r\n"
+					+ "FROM (SELECT ROW_NUMBER() OVER (ORDER BY BOARD_RECOMM DESC, BOARD_HIT DESC) AS RANKING, BOARD_NUMBER, BOARD_TITLE, BOARD_WRITER, BOARD_REGDATE, BOARD_HIT, BOARD_RECOMM\r\n"
+					+ "FROM TRP_CHAL ORDER BY BOARD_RECOMM DESC) WHERE RANKING BETWEEN 1 AND 10";
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			
+			while(rs.next()) {
+				chal = new ChalBoard();
+				chal.setRanking(rs.getInt("ranking"));
+				chal.setBoardNumber(rs.getInt("board_number"));
+				chal.setBoardTitle(rs.getString("board_title"));
+				chal.setBoardWriter(rs.getString("board_writer"));
+				chal.setBoardRegdate(rs.getDate("board_regdate"));
+				chal.setBoardHit(rs.getInt("board_hit"));
+				chal.setBoardRecomm(rs.getInt("board_recomm"));
+				list.add(chal);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			disconn();
+		}
+		return list;
+	}
 
 }

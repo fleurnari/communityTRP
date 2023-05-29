@@ -197,5 +197,18 @@ public class MainBoardService {
 		}
 	}
 	
+	// 베스트 게시판 글 목록 조회
+	public void getBestMainList() {
+		List<MainBoard> list = MainBoardDAO.getInstance().getBestMainList();
+		System.out.println("순위 | 번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수 | 추천수");
+		if (list.size() == 0) {
+			System.out.println("등록된 게시물이 없습니다.");
+		} else {
+			for(int i = 0; i < list.size(); i++) {
+				System.out.println(list.get(i).getRanking() + "\t" + list.get(i).getBoardNumber() + "\t" + list.get(i).getBoardTitle() + "\t" + list.get(i).getBoardWriter() + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit() + "\t" + list.get(i).getBoardRecomm());
+			}
+		}
+	}
+	
 	
 }

@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.trp.member.MemberService;
+import com.trp.report.Report;
+import com.trp.report.ReportService;
 
 public class AnonyBoardService {
 	
 	Scanner sc = new Scanner(System.in);
 	AnonyReplyService ars = new AnonyReplyService();
+	ReportService report = new ReportService();
 	
 	// 익명 게시판 글 목록 조회
 	public void getBoardList(int page) {
@@ -27,9 +30,13 @@ public class AnonyBoardService {
 	public void getBoard() {
 		System.out.println("조회할 게시물 번호를 입력하세요.");
 		int boardNum = Integer.parseInt(sc.nextLine());
+		getBoardPage(boardNum);
+	}
+	
+	// 익명 게시물 상세 보기 페이지
+	public void getBoardPage(int boardNum) {
 		boardHit(boardNum);
 		AnonyBoard anony = AnonyBoardDAO.getInstance().getBoard(boardNum);
-		
 		if (anony != null) {
 			System.out.println("===== 게시물 상세 조회 =====");
 			System.out.println("번호 : " + anony.getBoardNumber());
@@ -40,7 +47,7 @@ public class AnonyBoardService {
 			System.out.println("조회수 : " + anony.getBoardHit());
 			
 			ars.getReplyList(boardNum);
-			System.out.println("1. 댓글 작성 | 2. 댓글 수정 | 3. 댓글 삭제 | 4. 취소");
+			System.out.println("1. 댓글 작성 | 2. 댓글 수정 | 3. 댓글 삭제 | 4. 댓글 신고 | 5. 취소");
 			int rpSelectNo = Integer.parseInt(sc.nextLine());
 			if (rpSelectNo == 1) {
 				ars.writeReply(boardNum);
@@ -49,7 +56,9 @@ public class AnonyBoardService {
 			} else if (rpSelectNo == 3) {
 				ars.deleteReply(boardNum);
 			} else if (rpSelectNo == 4) {
-				
+				report.replyReport(anony);
+			} else if (rpSelectNo == 5) {
+			
 			} else {
 				System.out.println("잘못된 입력입니다.");
 			}
@@ -57,10 +66,12 @@ public class AnonyBoardService {
 			int selectNo;
 			
 			if (MemberService.memberInfo == null || !(MemberService.memberInfo.getMemberId().equals(anony.getBoardWriter())) && !(MemberService.memberInfo.getMemberAuth().equals("A"))) {
-				System.out.println("0. 뒤로 가기");
+				System.out.println("1. 뒤로 가기 | 2. 신고하기");
 				selectNo = Integer.parseInt(sc.nextLine());
-				if (selectNo == 0) {
+				if (selectNo == 1) {
 					return;
+				} else if (selectNo == 2) {
+					report.insertReport(anony);
 				} else {
 					System.out.println("잘못된 입력입니다.");
 				} 
@@ -83,7 +94,6 @@ public class AnonyBoardService {
 		} else {
 				System.out.println("해당 번호의 게시물이 없습니다.");
 		}
-
 	}
 	
 	// 익명 작성
@@ -171,5 +181,8 @@ public class AnonyBoardService {
 	public void boardHit(int boardNum) {
 		AnonyBoardDAO.getInstance().boardHit(boardNum);
 	}
+	
+
+	
 
 }

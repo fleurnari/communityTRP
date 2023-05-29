@@ -17,4 +17,7 @@ public class ChalBoard {
 	private Date BoardRegdate;
 	private int BoardHit;
 	private int BoardRecomm;
+	
+	// 베스트 게시판을 위한 필드
+	private int ranking;
 }

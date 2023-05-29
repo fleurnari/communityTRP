@@ -162,12 +162,20 @@ public class NoticeBoardService {
 		String searchWord = sc.nextLine();
 		
 		List<NoticeBoard> list = NoticeBoardDAO.getInstance().searchBoard(searchWord, selectNo);
-		System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수");
-		if (list.size() == 0) {
-			System.out.println("등록된 게시물이 없습니다.");
-		} else {
-			for(int i = 0; i < list.size(); i++) {
-				System.out.println(list.get(i).getBoardNumber() + "\t" + list.get(i).getBoardTitle() + "\t" + list.get(i).getBoardWriter() + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit());
+		
+		while(true) {
+			System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수");
+			if (list.size() == 0) {
+				System.out.println("등록된 게시물이 없습니다.");
+			} else {
+				for(int i = 0; i < list.size(); i++) {
+					System.out.println(list.get(i).getBoardNumber() + "\t" + list.get(i).getBoardTitle() + "\t" + list.get(i).getBoardWriter() + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit());
+				}
+		}
+			System.out.println("0. 전체 목록으로 돌아가기");
+			int returnList = Integer.parseInt(sc.nextLine());
+			if (returnList == 0) {
+				break;
 			}
 		
 	}

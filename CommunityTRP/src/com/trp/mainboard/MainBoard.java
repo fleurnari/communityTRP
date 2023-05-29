@@ -16,4 +16,7 @@ public class MainBoard {
 	private int BoardHit;
 	private int BoardRecomm;
 	
+	// 베스트 삼행시를 위한 필드
+	private int ranking;
+	
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.trp.common.DAO;
+import com.trp.report.Report;
 
 public class AnonyBoardDAO extends DAO {
 	
@@ -21,7 +22,7 @@ public class AnonyBoardDAO extends DAO {
 	}
 	
 
-	// 공지사항 게시판 글 목록 조회
+	// 익명 게시판 글 목록 조회
 	public List<AnonyBoard> getBoardList(int page) {
 		List<AnonyBoard> list = new ArrayList<>();
 		int start = 1 + (page - 1) * 10;
@@ -58,7 +59,7 @@ public class AnonyBoardDAO extends DAO {
 	}
 	
 
-	// 공지사항 게시물 상세 조회
+	// 익명 게시물 상세 조회
 	public AnonyBoard getBoard(int boardNum) {
 		AnonyBoard anony = null;
 		try {
@@ -86,7 +87,7 @@ public class AnonyBoardDAO extends DAO {
 		return anony;
 	}
 	
-	// 공지사항 작성
+	// 익명 작성
 	public int insertBoard(AnonyBoard anony) {
 		int result = 0;
 		try {
@@ -108,7 +109,7 @@ public class AnonyBoardDAO extends DAO {
 		return result;
 	}
 	
-	// 공지사항 수정
+	// 익명 수정
 	public int updateBoard(AnonyBoard anony, int selectNo) {
 		int result = 0;
 		try {
@@ -136,7 +137,7 @@ public class AnonyBoardDAO extends DAO {
 		
 	}
 	
-	// 공지사항 삭제
+	// 익명 삭제
 	public int deleteBoard(int boardNum) {
 		int result = 0;
 		try {
@@ -155,7 +156,7 @@ public class AnonyBoardDAO extends DAO {
 		return result;		
 	}
 	
-	// 공지사항 게시물 검색
+	// 익명 게시물 검색
 	public List<AnonyBoard> searchBoard(String searchWord) {
 		List<AnonyBoard> list = new ArrayList<>();
 		AnonyBoard anony = null;
@@ -203,6 +204,9 @@ public class AnonyBoardDAO extends DAO {
 			disconn();
 		}
 	}
+	
+
+	
 	
 	
 

@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-
+import com.trp.mainboard.MainBoard;
+import com.trp.mainboard.MainBoardDAO;
 import com.trp.member.MemberService;
 
 public class ChalBoardService {
@@ -112,36 +113,36 @@ public class ChalBoardService {
 			chal.setBoardTitle(randomWord);
 			chal.setBoardWriter(MemberService.memberInfo.getMemberId());
 			while (true) {
-				System.out.println("첫번째 행 >");
+				System.out.println("첫번째 행 > '" + randomWord.charAt(0) + "'로 시작하는 행을 입력해 주세요.");
 				String content1 = sc.nextLine();
 				if ((randomWord.substring(0,1).equals(content1.substring(0,1)))) {
 					chal.setBoardContent1(content1);
 					break;
 				} else {
-					System.out.println(randomWord.substring(0,1) + "로 시작하는 행을 입력해 주세요.");
+					System.out.println(randomWord.charAt(0) + "로 시작하는 행을 입력해 주세요.");
 				}
 			}
 			
 			while (true) {
-				System.out.println("두번째 행 >");
+				System.out.println("두번째 행 > '" + randomWord.charAt(1) + "'로 시작하는 행을 입력해 주세요.");
 				String content2 = sc.nextLine();
 				if ((randomWord.substring(1,2).equals(content2.substring(0,1)))) {
 					chal.setBoardContent2(content2);
 					break;
 				} else {
-					System.out.println(randomWord.substring(1,2) + "로 시작하는 행을 입력해 주세요.");
+					System.out.println(randomWord.charAt(1) + "로 시작하는 행을 입력해 주세요.");
 				}
 			}
 			
 			
 			while (true) {
-				System.out.println("세번째 행 >");
+				System.out.println("세번째 행 > '" + randomWord.charAt(2) + "'로 시작하는 행을 입력해 주세요.");
 				String content3 = sc.nextLine();
 				if ((randomWord.substring(2).equals(content3.substring(0,1)))) {
 					chal.setBoardContent3(content3);
 					break;
 				} else {
-					System.out.println(randomWord.substring(2) + "로 시작하는 행을 입력해 주세요.");
+					System.out.println(randomWord.charAt(2) + "로 시작하는 행을 입력해 주세요.");
 				}
 			}
 			
@@ -263,6 +264,19 @@ public class ChalBoardService {
 		} else {
 			ChalBoardDAO.getInstance().boardRecomm(chal.getBoardNumber());
 			System.out.println("해당 게시물을 추천 했습니다.");
+		}
+	}
+	
+	// 베스트 게시판 글 목록 조회
+	public void getBestChalList() {
+		List<ChalBoard> list = ChalBoardDAO.getInstance().getBestChalList();
+		System.out.println("순위 | 번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수 | 추천수");
+		if (list.size() == 0) {
+			System.out.println("등록된 게시물이 없습니다.");
+		} else {
+			for(int i = 0; i < list.size(); i++) {
+				System.out.println(list.get(i).getRanking() + "\t" + list.get(i).getBoardNumber() + "\t" + list.get(i).getBoardTitle() + "\t" + list.get(i).getBoardWriter() + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit() + "\t" + list.get(i).getBoardRecomm());
+			}
 		}
 	}
 	

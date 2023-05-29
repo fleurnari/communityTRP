@@ -35,7 +35,7 @@ public class BoardApp {
 				noticeBoardRun();
 				break;
 			case 2:
-				
+				bestBoardRun();
 				break;
 			case 3:
 				mainBoardRun();
@@ -59,8 +59,8 @@ public class BoardApp {
 	private void noticeBoardRun() {
 		boolean flag = true;
 		int page = 1;
-		nbs.getBoardList(page);
 		while (flag) {
+			nbs.getBoardList(page);
 			System.out.println("1. 게시물 상세 조회 | 2. 게시물 검색 | 3. 게시물 작성 | 4. 이전 페이지 | 5. 다음 페이지 | 6. 뒤로 가기");
 			int selectNo = Integer.parseInt(sc.nextLine());
 			switch (selectNo) {
@@ -94,11 +94,67 @@ public class BoardApp {
 		}
 	}
 	
+	private void bestBoardRun() {
+		boolean flag = true;
+		while (flag) {
+			System.out.println("1. 창작 삼행시 베스트 | 2. 삼행시 챌린지 베스트 | 3. 뒤로 가기");
+			int selectNo = Integer.parseInt(sc.nextLine());
+			switch (selectNo) {
+			case 1:
+				bestMainRun();
+				break;
+			case 2:
+				bestChalRun();
+				break;
+			case 3:
+				flag = false;
+				break;
+			}
+		}
+		
+	}
+	
+	private void bestMainRun() {
+		boolean flag = true;
+		while (flag) {
+			mbs.getBestMainList();
+			System.out.println("1. 게시물 상세 보기 | 2. 뒤로 가기");
+			int selectNo = Integer.parseInt(sc.nextLine());
+			switch (selectNo) {
+			case 1:
+				mbs.getBoard();
+				break;
+			case 2:
+				flag = false;
+				break;
+			}
+		}
+	}
+	
+	private void bestChalRun() {
+		boolean flag = true;
+		while (flag) {
+			cbs.getBestChalList();
+			System.out.println("1. 게시물 상세 보기 | 2. 뒤로 가기");
+			int selectNo = Integer.parseInt(sc.nextLine());
+			switch (selectNo) {
+			case 1:
+				cbs.getBoard();
+				break;
+			case 2:
+				flag = false;
+				break;
+			}
+		}
+	}
+	
+
+	
 	private void mainBoardRun() {
 		boolean flag = true;
 		int page = 1;
-		mbs.getBoardList(page);
 		while (flag) {
+			mbs.getBoardList(page);
 			System.out.println("1. 게시물 상세 조회 | 2. 게시물 검색 | 3. 게시물 작성 | 4. 이전 페이지 | 5. 다음 페이지 | 6. 뒤로 가기");
 			int selectNo = Integer.parseInt(sc.nextLine());
 			switch (selectNo) {
@@ -135,8 +191,8 @@ public class BoardApp {
 	private void chalBoardRun() {
 		boolean flag = true;
 		int page = 1;
-		cbs.getBoardList(page);
 		while (flag) {
+			cbs.getBoardList(page);
 			System.out.println("1. 게시물 상세 조회 | 2. 게시물 검색 | 3. 게시물 작성 | 4. 이전 페이지 | 5. 다음 페이지 | 6. 뒤로 가기");
 			int selectNo = Integer.parseInt(sc.nextLine());
 			switch (selectNo) {
@@ -174,8 +230,8 @@ public class BoardApp {
 	private void anonyBoardRun() {
 		boolean flag = true;
 		int page = 1;
-		abs.getBoardList(page);
 		while (flag) {
+			abs.getBoardList(page);
 			System.out.println("1. 게시물 상세 조회 | 2. 게시물 검색 | 3. 게시물 작성 | 4. 이전 페이지 | 5. 다음 페이지 | 6. 뒤로 가기");
 			int selectNo = Integer.parseInt(sc.nextLine());
 			switch (selectNo) {

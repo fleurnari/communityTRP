@@ -105,7 +105,7 @@ public class MemberService {
 			System.out.println("정말 TRP를 떠나실 건가요?😭😭 Y/N");
 			String answer = sc.nextLine();
 			if (answer.equals("Y")) {
-				int result = MemberDAO.getInstance().deleteMember(id);
+				MemberDAO.getInstance().deleteMember(id);
 				System.out.println("회원 탈퇴가 완료 되었습니다. 다음에 다시 가입해 주세요😥😥");
 				MemberService.memberInfo = null;
 			} else {
@@ -199,14 +199,18 @@ public class MemberService {
 	public void adminDeleteMember() {
 		System.out.println("탈퇴 시킬 회원의 아이디를 입력하세요.");
 		System.out.println("ID>");
-		String id = sc.nextLine();
-		
-		int result = MemberDAO.getInstance().adminDeleteMember(id);
-		
-		if (result == 1) {
+		adminDeleteMem(sc.nextLine());
+	}
+	
+	
+	public void adminDeleteMem(String id) {
+		System.out.println("정말 " + id + " 회원을 탈퇴 시킬까요? 1. 예 | 2. 아니오");
+		int delete = Integer.parseInt(sc.nextLine());
+		if (delete == 1) {
+			MemberDAO.getInstance().deleteMember(id);
 			System.out.println("해당 회원의 탈퇴가 완료 되었습니다.");
 		} else {
-			System.out.println("존재 하지 않는 회원입니다.");
+			System.out.println("강제 탈퇴를 취소 합니다.");
 		}
 	}
 }

@@ -217,25 +217,7 @@ public class MemberDAO extends DAO {
 		return result;
 	}
 	
-	// admin용 회원 삭제
-	public int adminDeleteMember(String id) {
-		int result = 0;
-		try {
-			conn();
-			String sql = "DELETE FROM trp_member WHERE member_id = ?";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, id);
-			
-			result = pstmt.executeUpdate();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			disconn();
-		}
-		
-		return result;
-	}
+
 	
 	
 
