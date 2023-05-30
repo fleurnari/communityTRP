@@ -207,7 +207,6 @@ public class MemberService {
 		System.out.println("정말 " + id + " 회원을 탈퇴 시킬까요? 1. 예 | 2. 아니오");
 		int delete = Integer.parseInt(sc.nextLine());
 		if (delete == 1) {
-			Member member = MemberDAO.getInstance().login(id);
 				MemberDAO.getInstance().deleteMember(id);
 				System.out.println("해당 회원의 탈퇴가 완료 되었습니다.");
 		} else {

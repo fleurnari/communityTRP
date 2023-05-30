@@ -177,12 +177,14 @@ public class ChalBoardDAO extends DAO {
 			conn();
 			String sql = "";
 			if (selectNo == 1) {
-				sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm FROM (SELECT ROWNUM NUM, N.* FROM (SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm FROM trp_chal WHERE board_title LIKE '%'||?||'%' OR board_content LIKE '%'||?||'%' ORDER BY 1 DESC) N) WHERE NUM BETWEEN ? AND ?";
+				sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm FROM (SELECT ROWNUM NUM, N.* FROM (SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm FROM trp_chal WHERE board_title LIKE '%'||?||'%' OR board_content1 LIKE '%'||?||'%' OR board_content2 LIKE '%'||?||'%' OR board_content3 LIKE '%'||?||'%' ORDER BY 1 DESC) N) WHERE NUM BETWEEN ? AND ?";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, searchWord);
 				pstmt.setString(2, searchWord);
-				pstmt.setInt(3, start);
-				pstmt.setInt(4, end);
+				pstmt.setString(3, searchWord);
+				pstmt.setString(4, searchWord);
+				pstmt.setInt(5, start);
+				pstmt.setInt(6, end);
 			} else if (selectNo == 2) {
 				sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm FROM (SELECT ROWNUM NUM, N.* FROM (SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm FROM trp_chal WHERE board_writer LIKE '%'||?||'%' ORDER BY 1 DESC) N) WHERE NUM BETWEEN ? AND ?";
 				pstmt = conn.prepareStatement(sql);
