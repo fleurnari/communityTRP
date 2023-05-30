@@ -16,6 +16,7 @@ public class ChalBoardService {
 	// 삼행시 게시판 글 목록 조회
 	public void getBoardList(int page) {
 		List<ChalBoard> list = ChalBoardDAO.getInstance().getBoardList(page);
+		System.out.println("================= 삼행시 챌린지 게시판 =================");
 		System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수 | 추천수");
 		if (list.size() == 0) {
 			System.out.println("등록된 게시물이 없습니다.");
@@ -47,35 +48,24 @@ public class ChalBoardService {
 			System.out.println("추천수 : " + chal.getBoardRecomm());
 			
 			crs.getReplyList(boardNum);
-			System.out.println("1. 댓글 작성 | 2. 댓글 수정 | 3. 댓글 삭제 | 4. 댓글 작업 취소");
-			int rpSelectNo = Integer.parseInt(sc.nextLine());
-			if (rpSelectNo == 1) {
-				crs.writeReply(boardNum);
-			} else if (rpSelectNo == 2) {
-				crs.updateReply(boardNum);
-			} else if (rpSelectNo == 3) {
-				crs.deleteReply(boardNum);
-			} else if (rpSelectNo == 4) {
-				
-			} else {
-				System.out.println("잘못된 입력입니다.");
-			}
 			
 			int selectNo;
 			
 			if (MemberService.memberInfo == null || !(MemberService.memberInfo.getMemberId().equals(chal.getBoardWriter())) && !(MemberService.memberInfo.getMemberAuth().equals("A"))) {
-				System.out.println("1. 추천 | 2. 뒤로 가기");
+				System.out.println("1. 추천 | 2. 댓글 작업 | 3. 뒤로 가기");
 				selectNo = Integer.parseInt(sc.nextLine());
 				if (selectNo == 1) {
 					boardRecomm(chal);
-				} else if (selectNo == 2) {
+				} else if (selectNo == 2){
+					crs.replyWork(boardNum);
+				} else if (selectNo == 3) {
 					return;
 				} else {
 					System.out.println("잘못된 입력입니다.");
 				} 
 				
 			} else {
-					System.out.println("1. 게시물 수정 | 2. 게시물 삭제 | 3. 추천 | 4. 뒤로 가기");
+					System.out.println("1. 게시물 수정 | 2. 게시물 삭제 | 3. 추천 | 4. 댓글 작업 | 5. 뒤로 가기");
 					selectNo = Integer.parseInt(sc.nextLine());
 					if (selectNo == 1) {
 						updateBoard(chal);
@@ -84,6 +74,8 @@ public class ChalBoardService {
 					} else if (selectNo == 3) {
 						boardRecomm(chal);;
 					} else if (selectNo == 4) {
+						crs.replyWork(boardNum);
+					} else if (selectNo == 5) {
 						return;
 					} else {
 						System.out.println("잘못된 입력입니다.");
@@ -227,25 +219,54 @@ public class ChalBoardService {
 	}
 	
 	// 삼행시 검색
-	public void searchBoard() {
-		System.out.println("===== 검색할 항목을 선택하세요. =====");
-		System.out.println("1. 제목+내용 | 2. 작성자");
-		int selectNo = Integer.parseInt(sc.nextLine());
-		System.out.println("===== 검색 단어를 입력하세요. =====");
-		String searchWord = sc.nextLine();
+		public void searchBoard() {
+			System.out.println("===== 검색할 항목을 선택하세요. =====");
+			System.out.println("1. 제목+내용 | 2. 작성자");
+			int selectNo = Integer.parseInt(sc.nextLine());
+			System.out.println("===== 검색 단어를 입력하세요. =====");
+			String searchWord = sc.nextLine();
+			searchBoardList(searchWord, selectNo, 1);
+			
+		}
 		
-		List<ChalBoard> list = ChalBoardDAO.getInstance().searchBoard(searchWord, selectNo);
-		System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수 | 추천수");
-		if (list.size() == 0) {
-			System.out.println("등록된 게시물이 없습니다.");
-		} else {
-			for(int i = 0; i < list.size(); i++) {
-				System.out.println(list.get(i).getBoardNumber() + "\t" + list.get(i).getBoardTitle() + "\t" + list.get(i).getBoardWriter() + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit() + "\t" + list.get(i).getBoardRecomm());
+	// 삼행시 검색 결과 보여주기
+	public void searchBoardList(String searchWord, int selectNo, int page) {
+		List<ChalBoard> list = ChalBoardDAO.getInstance().searchBoard(searchWord, selectNo, page);
+		boolean flag = true;
+		
+		while(flag) {
+			System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수 | 추천수");
+			if (list.size() == 0) {
+				System.out.println("등록된 게시물이 없습니다.");
+			} else {
+				for(int i = 0; i < list.size(); i++) {
+					System.out.println(list.get(i).getBoardNumber() + "\t" + list.get(i).getBoardTitle() + "\t" + list.get(i).getBoardWriter() + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit() + list.get(i).getBoardRecomm());
+				}
+		}
+			System.out.println("1. 게시물 상세 조회 | 2. 게시물 작성 | 3. 이전 페이지 | 4. 다음 페이지 | 5. 전체 목록으로 돌아가기");
+			int returnList = Integer.parseInt(sc.nextLine());
+			if (returnList == 1) {
+				getBoard();
+			} else if (returnList == 2) {
+				insertBoard();
+			} else if (returnList == 3) {
+				page--;
+				if (page <= 1) {
+					page = 1;
+				}
+				searchBoardList(searchWord, selectNo, page);
+			} else if (returnList == 4) {
+				page++;
+				searchBoardList(searchWord, selectNo, page);
+			} else if (returnList == 5) {
+				flag = false;
+			} else {
+				System.out.println("잘못된 입력입니다.");
 			}
-		
-	}
+			
+		}
 
-	}
+		}
 	
 	// 게시판 조회수
 	public void boardHit(int boardNum) {
@@ -270,6 +291,8 @@ public class ChalBoardService {
 	// 베스트 게시판 글 목록 조회
 	public void getBestChalList() {
 		List<ChalBoard> list = ChalBoardDAO.getInstance().getBestChalList();
+		System.out.println("==================== 베스트 게시판 - 삼행시 챌린지 부문 ====================");
+		System.out.println("추천수 상위 10개의 게시물이 표시 됩니다. (추천수가 같을 시 조회수 순서대로 정렬 됩니다.)");
 		System.out.println("순위 | 번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수 | 추천수");
 		if (list.size() == 0) {
 			System.out.println("등록된 게시물이 없습니다.");

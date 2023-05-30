@@ -92,7 +92,7 @@ public class NoticeBoardDAO extends DAO {
 		int result = 0;
 		try {
 			conn();
-			String sql = "INSERT INTO trp_notice VALUES (trp_board_seq.NEXTVAL,?,?,?,sysdate,0)";
+			String sql = "INSERT INTO trp_notice VALUES (trp_notice_seq.NEXTVAL,?,?,?,sysdate,0)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, notice.getBoardTitle());
 			pstmt.setString(2, notice.getBoardWriter());
@@ -157,22 +157,28 @@ public class NoticeBoardDAO extends DAO {
 	}
 	
 	// 공지사항 게시물 검색
-	public List<NoticeBoard> searchBoard(String searchWord, int selectNo) {
+	public List<NoticeBoard> searchBoard(String searchWord, int selectNo, int page) {
 		List<NoticeBoard> list = new ArrayList<>();
 		NoticeBoard notice = null;
+		int start = 1 + (page - 1) * 10;
+		int end = 10 * page;
 		
 		try {
 			conn();
 			String sql = "";
 			if (selectNo == 1) {
-				sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit FROM trp_notice WHERE board_title LIKE '%'||?||'%' OR board_content LIKE '%'||?||'%' ORDER BY 1 DESC";
+				sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit FROM (SELECT ROWNUM NUM, N.* FROM (SELECT board_number, board_title, board_writer, board_regdate, board_hit FROM trp_notice WHERE board_title LIKE '%'||?||'%' OR board_content LIKE '%'||?||'%' ORDER BY 1 DESC) N) WHERE NUM BETWEEN ? AND ?";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, searchWord);
 				pstmt.setString(2, searchWord);
+				pstmt.setInt(3, start);
+				pstmt.setInt(4, end);
 			} else if (selectNo == 2) {
-				sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit FROM trp_notice WHERE board_writer LIKE '%'||?||'%' ORDER BY 1 DESC";
+				sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit FROM (SELECT ROWNUM NUM, N.* FROM (SELECT board_number, board_title, board_writer, board_regdate, board_hit FROM trp_notice WHERE board_writer LIKE '%'||?||'%' ORDER BY 1 DESC) N) WHERE NUM BETWEEN ? AND ?";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, searchWord);
+				pstmt.setInt(2, start);
+				pstmt.setInt(3, end);
 			}
 			
 			rs = pstmt.executeQuery();

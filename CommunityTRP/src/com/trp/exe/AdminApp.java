@@ -18,6 +18,7 @@ public class AdminApp {
 	private void adminRun() {
 		boolean flag = true;
 		while(flag) {
+			System.out.println("[관리자 모드] " + MemberService.memberInfo.getMemberId() + "님 환영합니다.");
 			System.out.println("1. 게시판 접속 | 2. 회원 관리 | 3. 신고 처리 | 4. 로그아웃");
 			int selectNo = Integer.parseInt(sc.nextLine());
 			

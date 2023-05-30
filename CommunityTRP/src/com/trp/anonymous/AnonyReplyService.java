@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.trp.member.MemberService;
+import com.trp.report.ReportService;
 
 public class AnonyReplyService {
 	
 	Scanner sc = new Scanner(System.in);
+	ReportService report = new ReportService();
 	
 	// 댓글 조회
 	public void getReplyList(int boardNum) {
@@ -73,7 +75,7 @@ public class AnonyReplyService {
 		
 	}
 	
-	
+	// 댓글 삭제
 	public void deleteReply(int boardNum) {
 		AnonyReply reply = new AnonyReply();
 		reply.setBoardNumber(boardNum);
@@ -94,5 +96,24 @@ public class AnonyReplyService {
 			}
 		}
 	}
+	
+	public void replyWork(AnonyBoard anony) {
+		System.out.println("1. 댓글 작성 | 2. 댓글 수정 | 3. 댓글 삭제 | 4. 댓글 신고 | 5. 취소");
+		int rpSelectNo = Integer.parseInt(sc.nextLine());
+		if (rpSelectNo == 1) {
+			writeReply(anony.getBoardNumber());
+		} else if (rpSelectNo == 2) {
+			updateReply(anony.getBoardNumber());
+		} else if (rpSelectNo == 3) {
+			deleteReply(anony.getBoardNumber());
+		} else if (rpSelectNo == 4) {
+			report.replyReport(anony);
+		} else if (rpSelectNo == 5) {
+		
+		} else {
+			System.out.println("잘못된 입력입니다.");
+		}
+	}
+	
 
 }

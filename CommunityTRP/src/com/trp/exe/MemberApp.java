@@ -17,6 +17,7 @@ public class MemberApp {
 	private void memberRun() {
 		boolean flag = true;
 		while (flag) {
+			System.out.println("[사용자 모드] " + MemberService.memberInfo.getMemberId() + "님 환영합니다.");
 			System.out.println("1. 게시판 접속 | 2. 회원 정보 수정 | 3. 회원 탈퇴 | 4. 로그아웃");
 			int selectNo = Integer.parseInt(sc.nextLine());
 			switch (selectNo) {

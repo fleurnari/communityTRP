@@ -42,39 +42,29 @@ public class NoticeBoardService {
 			System.out.println("조회수 : " + notice.getBoardHit());
 			
 			nrs.getReplyList(boardNum);
-			System.out.println("1. 댓글 작성 | 2. 댓글 수정 | 3. 댓글 삭제 | 4. 취소");
-			int rpSelectNo = Integer.parseInt(sc.nextLine());
-			if (rpSelectNo == 1) {
-				nrs.writeReply(boardNum);
-			} else if (rpSelectNo == 2) {
-				nrs.updateReply(boardNum);
-			} else if (rpSelectNo == 3) {
-				nrs.deleteReply(boardNum);
-			} else if (rpSelectNo == 4) {
-				
-			} else {
-				System.out.println("잘못된 입력입니다.");
-			}
-			
 			int selectNo;
 			
 			if (MemberService.memberInfo == null || !(MemberService.memberInfo.getMemberId().equals(notice.getBoardWriter())) && !(MemberService.memberInfo.getMemberAuth().equals("A"))) {
-				System.out.println("0. 뒤로 가기");
+				System.out.println("1. 댓글 작업 | 2. 뒤로 가기");
 				selectNo = Integer.parseInt(sc.nextLine());
-				if (selectNo == 0) {
+			  if (selectNo == 1) {
+				  nrs.replyWork(boardNum);
+			  } else if (selectNo == 2) {
 					return;
 				} else {
 					System.out.println("잘못된 입력입니다.");
 				} 
 				
 			} else {
-					System.out.println("1. 게시물 수정 | 2. 게시물 삭제 | 3. 뒤로 가기");
+					System.out.println("1. 게시물 수정 | 2. 게시물 삭제 | 3. 댓글 작업 | 4. 뒤로 가기");
 					selectNo = Integer.parseInt(sc.nextLine());
 					if (selectNo == 1) {
 						updateBoard(notice);
 					} else if (selectNo == 2) {
 						deleteBoard(notice);
 					} else if (selectNo == 3) {
+						nrs.replyWork(boardNum);
+					} else if (selectNo == 4) {
 						return;
 					} else {
 						System.out.println("잘못된 입력입니다.");
@@ -160,22 +150,45 @@ public class NoticeBoardService {
 		int selectNo = Integer.parseInt(sc.nextLine());
 		System.out.println("===== 검색 단어를 입력하세요. =====");
 		String searchWord = sc.nextLine();
+		searchBoardList(searchWord, selectNo, 1);
 		
-		List<NoticeBoard> list = NoticeBoardDAO.getInstance().searchBoard(searchWord, selectNo);
+	}
+	
+	
+	// 공지사항 검색 결과 보여주기
+	public void searchBoardList(String searchWord, int selectNo, int page) {
+		List<NoticeBoard> list = NoticeBoardDAO.getInstance().searchBoard(searchWord, selectNo, page);
+		boolean flag = true;
 		
-		while(true) {
+		while(flag) {
+			System.out.println("=============== 공지사항 게시판 ===============");
 			System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수");
 			if (list.size() == 0) {
 				System.out.println("등록된 게시물이 없습니다.");
 			} else {
 				for(int i = 0; i < list.size(); i++) {
-					System.out.println(list.get(i).getBoardNumber() + "\t" + list.get(i).getBoardTitle() + "\t" + list.get(i).getBoardWriter() + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit());
+					System.out.println(list.get(i).getBoardNumber() + " " + list.get(i).getBoardTitle() + "\t" + list.get(i).getBoardWriter() + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit());
 				}
 		}
-			System.out.println("0. 전체 목록으로 돌아가기");
+			System.out.println("1. 게시물 상세 조회 | 2. 게시물 작성 | 3. 이전 페이지 | 4. 다음 페이지 | 5. 전체 목록으로 돌아가기");
 			int returnList = Integer.parseInt(sc.nextLine());
-			if (returnList == 0) {
-				break;
+			if (returnList == 1) {
+				getBoard();
+			} else if (returnList == 2) {
+				insertBoard();
+			} else if (returnList == 3) {
+				page--;
+				if (page <= 1) {
+					page = 1;
+				}
+				searchBoardList(searchWord, selectNo, page);
+			} else if (returnList == 4) {
+				page++;
+				searchBoardList(searchWord, selectNo, page);
+			} else if (returnList == 5) {
+				flag = false;
+			} else {
+				System.out.println("잘못된 입력입니다.");
 			}
 		
 	}
@@ -186,6 +199,8 @@ public class NoticeBoardService {
 	public void boardHit(int boardNum) {
 		NoticeBoardDAO.getInstance().boardHit(boardNum);
 	}
+	
+
 	
 
 	

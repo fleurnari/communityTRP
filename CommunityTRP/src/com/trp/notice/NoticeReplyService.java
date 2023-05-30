@@ -9,6 +9,8 @@ public class NoticeReplyService {
 	
 	Scanner sc = new Scanner(System.in);
 	
+
+	
 	// 댓글 조회
 	public void getReplyList(int boardNum) {
 		List<NoticeReply> list = NoticeReplyDAO.getInstance().getReplyList(boardNum);
@@ -73,7 +75,7 @@ public class NoticeReplyService {
 		
 	}
 	
-	
+	// 댓글 삭제
 	public void deleteReply(int boardNum) {
 		NoticeReply reply = new NoticeReply();
 		reply.setBoardNumber(boardNum);
@@ -92,6 +94,23 @@ public class NoticeReplyService {
 			} else {
 				System.out.println("댓글 삭제에 실패 했습니다.");
 			}
+		}
+	}
+	
+	// 댓글 작업 메소드
+	public void replyWork(int boardNum) {
+		System.out.println("1. 댓글 작성 | 2. 댓글 수정 | 3. 댓글 삭제 | 4. 취소");
+		int rpSelectNo = Integer.parseInt(sc.nextLine());
+		if (rpSelectNo == 1) {
+			writeReply(boardNum);
+		} else if (rpSelectNo == 2) {
+			updateReply(boardNum);
+		} else if (rpSelectNo == 3) {
+			deleteReply(boardNum);
+		} else if (rpSelectNo == 4) {
+			return;
+		} else {
+			System.out.println("잘못된 입력입니다.");
 		}
 	}
 	

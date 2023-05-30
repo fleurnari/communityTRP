@@ -158,24 +158,29 @@ public class MainBoardDAO extends DAO {
 	}
 	
 	// 삼행시 게시물 검색
-	public List<MainBoard> searchBoard(String searchWord, int selectNo) {
+	public List<MainBoard> searchBoard(String searchWord, int selectNo, int page) {
 		List<MainBoard> list = new ArrayList<>();
 		MainBoard main = null;
+		int start = 1 + (page - 1) * 10;
+		int end = 10 * page;
 		
 		try {
 			conn();
 			String sql = "";
 			if (selectNo == 1) {
-				sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm FROM trp_main WHERE board_title LIKE '%'||?||'%' OR board_content LIKE '%'||?||'%' ORDER BY 1 DESC";
+				sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm FROM (SELECT ROWNUM NUM, N.* FROM (SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm FROM trp_main WHERE board_title LIKE '%'||?||'%' OR board_content LIKE '%'||?||'%' ORDER BY 1 DESC) N) WHERE NUM BETWEEN ? AND ?";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, searchWord);
 				pstmt.setString(2, searchWord);
+				pstmt.setInt(3, start);
+				pstmt.setInt(4, end);
 			} else if (selectNo == 2) {
-				sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm FROM trp_main WHERE board_writer LIKE '%'||?||'%' ORDER BY 1 DESC";
+				sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm FROM (SELECT ROWNUM NUM, N.* FROM (SELECT board_number, board_title, board_writer, board_regdate, board_hit, board_recomm FROM trp_main WHERE board_writer LIKE '%'||?||'%' ORDER BY 1 DESC) N) WHERE NUM BETWEEN ? AND ?";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, searchWord);
+				pstmt.setInt(2, start);
+				pstmt.setInt(3, end);
 			}
-			
 			rs = pstmt.executeQuery();
 			
 			while (rs.next()) {

@@ -157,16 +157,20 @@ public class AnonyBoardDAO extends DAO {
 	}
 	
 	// 익명 게시물 검색
-	public List<AnonyBoard> searchBoard(String searchWord) {
+	public List<AnonyBoard> searchBoard(String searchWord, int page) {
 		List<AnonyBoard> list = new ArrayList<>();
 		AnonyBoard anony = null;
+		int start = 1 + (page - 1) * 10;
+		int end = 10 * page;
 		
 		try {
 			conn();
-			String sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit FROM trp_anony WHERE board_title LIKE '%'||?||'%' OR board_content LIKE '%'||?||'%' ORDER BY 1 DESC";
+			String sql = "SELECT board_number, board_title, board_writer, board_regdate, board_hit FROM (SELECT ROWNUM NUM, N.* FROM (SELECT board_number, board_title, board_writer, board_regdate, board_hit FROM trp_anony WHERE board_title LIKE '%'||?||'%' OR board_content LIKE '%'||?||'%' ORDER BY 1 DESC) N) WHERE NUM BETWEEN ? AND ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, searchWord);
 			pstmt.setString(2, searchWord);
+			pstmt.setInt(3, start);
+			pstmt.setInt(4, end);
 			rs = pstmt.executeQuery();
 			
 			while (rs.next()) {

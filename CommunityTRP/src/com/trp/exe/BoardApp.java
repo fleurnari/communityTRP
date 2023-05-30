@@ -78,11 +78,9 @@ public class BoardApp {
 				if (page <= 1) {
 					page = 1;
 				}
-				nbs.getBoardList(page);
 				break;
 			case 5:
 				page++;
-				nbs.getBoardList(page);
 				break;
 			case 6:
 				flag = false;
@@ -172,11 +170,9 @@ public class BoardApp {
 				if (page <= 1) {
 					page = 1;
 				}
-				mbs.getBoardList(page);
 				break;
 			case 5:
 				page++;
-				mbs.getBoardList(page);
 				break;
 			case 6:
 				flag = false;
@@ -210,11 +206,9 @@ public class BoardApp {
 				if (page <= 1) {
 					page = 1;
 				}
-				cbs.getBoardList(page);
 				break;
 			case 5:
 				page++;
-				cbs.getBoardList(page);
 				break;
 			case 6:
 				flag = false;
@@ -249,11 +243,9 @@ public class BoardApp {
 				if (page <= 1) {
 					page = 1;
 				}
-				abs.getBoardList(page);
 				break;
 			case 5:
 				page++;
-				abs.getBoardList(page);
 				break;
 			case 6:
 				flag = false;

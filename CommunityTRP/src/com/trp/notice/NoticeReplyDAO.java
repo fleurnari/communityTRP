@@ -56,7 +56,7 @@ public class NoticeReplyDAO extends DAO {
 		int result = 0;
 		try {
 			conn();
-			String sql = "INSERT INTO notice_reply VALUES (?,main_reply_seq.nextval,?,?,sysdate)";
+			String sql = "INSERT INTO notice_reply VALUES (?,notice_reply_seq.nextval,?,?,sysdate)";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, reply.getBoardNumber());
 			pstmt.setString(2, reply.getReplyWriter());
@@ -122,13 +122,14 @@ public class NoticeReplyDAO extends DAO {
 		NoticeReply reply = null;
 		try {
 			conn();
-			String sql = "SELECT reply_number, reply_writer, reply_content FROM notice_reply WHERE reply_number = ?";
+			String sql = "SELECT board_number, reply_number, reply_writer, reply_content FROM notice_reply WHERE reply_number = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, replyNum);
 			rs = pstmt.executeQuery();
 			
 			if (rs.next()) {
 				reply = new NoticeReply();
+				reply.setBoardNumber(rs.getInt("board_number"));
 				reply.setReplyNumber(rs.getInt("reply_number"));
 				reply.setReplyWriter(rs.getString("reply_writer"));
 				reply.setReplyContent(rs.getString("reply_content"));

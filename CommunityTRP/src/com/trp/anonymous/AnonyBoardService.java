@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.trp.member.MemberService;
+import com.trp.notice.NoticeBoard;
+import com.trp.notice.NoticeBoardDAO;
 import com.trp.report.Report;
 import com.trp.report.ReportService;
 
@@ -16,6 +18,7 @@ public class AnonyBoardService {
 	// 익명 게시판 글 목록 조회
 	public void getBoardList(int page) {
 		List<AnonyBoard> list = AnonyBoardDAO.getInstance().getBoardList(page);
+		System.out.println("==================== 익명 게시판 ===============");
 		System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수");
 		if (list.size() == 0) {
 			System.out.println("등록된 게시물이 없습니다.");
@@ -47,43 +50,32 @@ public class AnonyBoardService {
 			System.out.println("조회수 : " + anony.getBoardHit());
 			
 			ars.getReplyList(boardNum);
-			System.out.println("1. 댓글 작성 | 2. 댓글 수정 | 3. 댓글 삭제 | 4. 댓글 신고 | 5. 취소");
-			int rpSelectNo = Integer.parseInt(sc.nextLine());
-			if (rpSelectNo == 1) {
-				ars.writeReply(boardNum);
-			} else if (rpSelectNo == 2) {
-				ars.updateReply(boardNum);
-			} else if (rpSelectNo == 3) {
-				ars.deleteReply(boardNum);
-			} else if (rpSelectNo == 4) {
-				report.replyReport(anony);
-			} else if (rpSelectNo == 5) {
-			
-			} else {
-				System.out.println("잘못된 입력입니다.");
-			}
 			
 			int selectNo;
 			
 			if (MemberService.memberInfo == null || !(MemberService.memberInfo.getMemberId().equals(anony.getBoardWriter())) && !(MemberService.memberInfo.getMemberAuth().equals("A"))) {
-				System.out.println("1. 뒤로 가기 | 2. 신고하기");
+				System.out.println("1. 댓글 작업 | 2. 신고하기 | 3. 뒤로 가기");
 				selectNo = Integer.parseInt(sc.nextLine());
 				if (selectNo == 1) {
-					return;
+					ars.replyWork(anony);
 				} else if (selectNo == 2) {
 					report.insertReport(anony);
+				} else if (selectNo == 3) {
+					return;
 				} else {
 					System.out.println("잘못된 입력입니다.");
 				} 
 				
 			} else {
-					System.out.println("1. 게시물 수정 | 2. 게시물 삭제 | 3. 뒤로 가기");
+					System.out.println("1. 게시물 수정 | 2. 게시물 삭제 | 3. 댓글 작업 | 4. 뒤로 가기");
 					selectNo = Integer.parseInt(sc.nextLine());
 					if (selectNo == 1) {
 						updateBoard(anony);
 					} else if (selectNo == 2) {
 						deleteBoard(anony);
 					} else if (selectNo == 3) {
+						ars.replyWork(anony);
+					} else if (selectNo == 4) {
 						return;
 					} else {
 						System.out.println("잘못된 입력입니다.");
@@ -161,18 +153,54 @@ public class AnonyBoardService {
 	
 	// 익명 검색
 	public void searchBoard() {
-		System.out.println("===== 제목+내용을 검색할 단어를 입력하세요. =====");
+		System.out.println("===== 검색할 항목을 선택하세요. =====");
+		System.out.println("1. 제목+내용 | 2. 작성자");
+		int selectNo = Integer.parseInt(sc.nextLine());
+		System.out.println("===== 검색 단어를 입력하세요. =====");
 		String searchWord = sc.nextLine();
+		searchBoardList(searchWord, 1);
 		
-		List<AnonyBoard> list = AnonyBoardDAO.getInstance().searchBoard(searchWord);
-		System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수");
-		if (list.size() == 0) {
-			System.out.println("등록된 게시물이 없습니다.");
-		} else {
-			for(int i = 0; i < list.size(); i++) {
-				System.out.println(list.get(i).getBoardNumber() + "\t" + list.get(i).getBoardTitle() + "\t" + "익명의 사용자" + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit());
+	}
+	
+	
+	// 공지사항 검색 결과 보여주기
+	public void searchBoardList(String searchWord, int page) {
+		List<AnonyBoard> list = AnonyBoardDAO.getInstance().searchBoard(searchWord, page);
+		boolean flag = true;
+		
+		while(flag) {
+			System.out.println("===== 익명 게시판 =====");
+			System.out.println("번호 | \t제목\t | \t작성자\t | \t등록일\t | 조회수");
+			if (list.size() == 0) {
+				System.out.println("등록된 게시물이 없습니다.");
+			} else {
+				for(int i = 0; i < list.size(); i++) {
+					System.out.println(list.get(i).getBoardNumber() + " " + list.get(i).getBoardTitle() + "\t" + "익명의 사용자" + "\t" + list.get(i).getBoardRegdate() + "\t" + list.get(i).getBoardHit());
+				}
+		
+		}
+			System.out.println("1. 게시물 상세 조회 | 2. 게시물 작성 | 3. 이전 페이지 | 4. 다음 페이지 | 5. 전체 목록으로 돌아가기");
+			int returnList = Integer.parseInt(sc.nextLine());
+			if (returnList == 1) {
+				getBoard();
+			} else if (returnList == 2) {
+				insertBoard();
+			} else if (returnList == 3) {
+				page--;
+				if (page <= 1) {
+					page = 1;
+				}
+				searchBoardList(searchWord, page);
+			} else if (returnList == 4) {
+				page++;
+				searchBoardList(searchWord, page);
+			} else if (returnList == 5) {
+				flag = false;
+				break;
+			} else {
+				System.out.println("잘못된 입력입니다.");
 			}
-		
+			
 	}
 
 	}
@@ -182,7 +210,6 @@ public class AnonyBoardService {
 		AnonyBoardDAO.getInstance().boardHit(boardNum);
 	}
 	
-
 	
 
 }
