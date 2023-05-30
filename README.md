@@ -8,7 +8,7 @@ TRP와 함께 삼행시 세계 1위에 도전해 보세요!
 
 JDK 11
 
-ORACLE 21C
+ORACLE 21C + SQL DEVELOPER
 
 ECLIPSE
 
